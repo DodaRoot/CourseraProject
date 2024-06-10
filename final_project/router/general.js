@@ -39,4 +39,64 @@ public_users.get("/review/:isbn", function (req, res) {
   return res.status(300).json({ message: "Yet to be implemented" });
 });
 
+// My work
+public_users.get("/", function (req, res) {
+  return res.status(200).json(books);
+});
+
+public_users.get("/isbn/:isbn", function (req, res) {
+  const isbn = req.params.isbn;
+  if (books[isbn]) {
+    return res.status(200).json(books[isbn]);
+  } else {
+    return res.status(404).json({ message: "Book not found" });
+  }
+});
+
+public_users.get("/author/:author", function (req, res) {
+  const author = req.params.author;
+  const result = [];
+  for (let isbn in books) {
+    if (books[isbn].author === author) {
+      result.push(books[isbn]);
+    }
+  }
+  return res.status(200).json(result);
+});
+
+public_users.get("/title/:title", function (req, res) {
+  const title = req.params.title;
+  const result = [];
+  for (let isbn in books) {
+    if (books[isbn].title === title) {
+      result.push(books[isbn]);
+    }
+  }
+  return res.status(200).json(result);
+});
+
+public_users.get("/review/:isbn", function (req, res) {
+  const isbn = req.params.isbn;
+  if (books[isbn]) {
+    return res.status(200).json(books[isbn].reviews);
+  } else {
+    return res.status(404).json({ message: "Book not found" });
+  }
+});
+
+public_users.post("/register", (req, res) => {
+  const { username, password } = req.body;
+  if (username && password) {
+    if (!isValid(username)) {
+      users.push({ username, password });
+      return res.status(200).json({ message: "User registered successfully" });
+    } else {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+  }
+  return res
+    .status(400)
+    .json({ message: "Username and password are required" });
+});
+
 module.exports.general = public_users;
